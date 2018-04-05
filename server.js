@@ -9,83 +9,38 @@ var logger = require("morgan");
 var cheerio = require("cheerio");
 var request = require("request");
 
+// Require all models //
+var db = require("./models");
+
+// Set active port //
+var PORT = 3000;
+
 // Initialize express //
 var app = express();
 
-// Configure the database //
-var databaseUrl = "nytScraper";
-var collections = ["scrapedData"];
+// Set up middleware //
 
-// Link mongojs to the db variable //
-var db = mongojs(databaseUrl, collections);
-db.on("error", function(error) {
-    console.log("Database Error:", error);
-})
+// Use the morgan logger package for logging requests //
+app.use(logger("dev"));
 
-// Set home route (Simple "Get Scraped Scrub" message to not have page blank) //
+// Use body-parser package for handling form submissions //
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Use express.static package to push to the public folder //
+app.use(express.static("public"));
+
+// Activate the handlebars struggle //
+app.engine("handlebars", exphbs({defaultLayout: "main"}));
+app.set("view engine", "handlebars");
+
+// Set up for Heroku deployment? Still confused on this //
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+mongoose.Promise = Promise;
+mongoose.connect(MONGODB_URI);
+
+// Set home route (Simple message to not have page blank) //
 app.get("/", function(req, res) {
-    res.send("Get Scraped Scrub");
-});
-
-// Set route to retrieve data from the db //
-app.get("/all", function(req, res) {
-
-    // Find all results from the scrapedData collection in the db //
-    db.scrapedData.find({}, function(error, found) {
-
-        // Log errors to the console //
-        if (error) {
-            console.log(error);
-        }
-
-        // If there are no errors, send data back to the browser as json //
-        else {
-            res.json(found);
-        }
-    });
-});
-
-// Set route to scrape data from the site and send it to the mongodb db //
-app.get("/scrape", function(req, res) {
-
-    // Make a request to the nyt //
-    request("https://www.nytimes.com/", function(error, response, html) {
-
-    // Load the html body from request into cheerio //
-    var $ = cheerio.load(html);
-
-    // For each element with a "title" class //
-    $(".title").each(function(i, element) {
-
-        // Save the text and href of each link enclosed in the current element //
-        var title = $(element).children("a").text();
-        var link = $(element).children("a").attr("href");
-
-        // If this element has both a title and a link //
-        if (title && link) {
-
-            // Insert the scraped data into the scrapedData db //
-            db.scrapedData.insert({
-                title: title,
-                link: link
-            },
-            function(err, inserted) {
-                if (err) {
-
-                    // Log the error if one is encountered during the query //
-                    console.log(err);
-                }
-                else {
-                    // If no error, log inserted data //
-                    console.log(inserted);
-                }
-            });
-        }
-    });
-});
-
-    // Send a "Scrape Complete" message to the browser //
-    res.send("Scrape Complete");
+    res.send("Don't be mad at me if you get caught scraping bruh");
 });
 
 // Set app to listen/run on port 3000 //

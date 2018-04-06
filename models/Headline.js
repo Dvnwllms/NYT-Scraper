@@ -6,7 +6,7 @@ var Schema = mongoose.Schema;
 
 // Using the Schema constructor, create a new HeadlineSchema object //
 // Similar set up to Sequelise //
-var HeadlineShcema = new Schema ({
+var HeadlineSchema = new Schema ({
 
     // Title is required as well as the type of string //
     title: {

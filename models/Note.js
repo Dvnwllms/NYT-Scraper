@@ -6,7 +6,7 @@ var Schema = mongoose.Schema;
 
 // Using the Schema constructor, create a new NoteSchema object //
 // Similar set up to Sequelise //
-var NoteShcema = new Schema ({
+var NoteSchema = new Schema ({
     
     // Title is a string //
     title: String,
@@ -16,7 +16,7 @@ var NoteShcema = new Schema ({
 });
 
 // This creates our model from the above schema, using mongoose's built in model method //
-var Headline = mongoose.model("Note", NoteSchema);
+var Note = mongoose.model("Note", NoteSchema);
 
 // Export this file //
 module.exports = Note;
